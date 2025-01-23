@@ -1,44 +1,42 @@
-import { PaginationResponse } from '#common/pagination/PaginationResponse';
+import { PaginationEnum } from '#common/pagination/enum/pagination.enum';
+import { PaginationResponse } from '#common/pagination/pagination.response';
 
-export class PaginationBuilder<T> {
-  _data: T[];
-  _page: number;
-  _size: number;
-  _sort: string;
-  _sortObj: object;
-  _totalCount: number;
+interface DataItem {
+  [key: string]: any;
+}
+
+export class PaginationBuilder<T extends DataItem> {
+  private data: T[];
+  private page: number = PaginationEnum.PAGE_DEFAULT;
+  private size: number = PaginationEnum.SIZE_DEFAULT;
+  private totalCount: number = 0;
 
   setData(data: T[]) {
-    this._data = data;
+    this.data = data;
     return this;
   }
 
   setPage(page: number) {
-    this._page = page;
+    this.page = page;
     return this;
   }
 
   setSize(size: number) {
-    this._size = size;
-    return this;
-  }
-
-  setSort(sort: string) {
-    this._sort = sort;
-    return this;
-  }
-
-  sortObject(sortObj: object) {
-    this._sortObj = sortObj;
+    this.size = size;
     return this;
   }
 
   setTotalCount(totalCount: number) {
-    this._totalCount = totalCount;
+    this.totalCount = totalCount;
     return this;
   }
 
-  build() {
-    return new PaginationResponse(this);
+  build(): PaginationResponse<T> {
+    return new PaginationResponse<T>(
+      this.data,
+      this.page,
+      this.size,
+      this.totalCount,
+    );
   }
 }
